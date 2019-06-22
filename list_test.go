@@ -14,7 +14,7 @@ var (
 	testData6 = 3
 )
 
-func cleanup(impl *DoublyLinkedList) {
+func cleanup(impl *ListImpl) {
 	impl = nil
 	return
 }
@@ -24,7 +24,7 @@ func cleanup(impl *DoublyLinkedList) {
  */
 func TestNewList(t *testing.T) {
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 
 	if assert.NotNil(t, list) {
 		assert.Equal(t, 0, list.Len())
@@ -35,7 +35,7 @@ func TestNewList(t *testing.T) {
 
 func TestListGeneral(t *testing.T) {
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 
 	list.PushFront(testData1)
 	list.PushFront(testData2)
@@ -57,7 +57,7 @@ func TestListGeneral(t *testing.T) {
  */
 func TestListImpl_SingleElementList(t *testing.T) {
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 
 	list.PushFront(testData1)
 
@@ -69,7 +69,7 @@ func TestListImpl_SingleElementList(t *testing.T) {
 
 func TestListImpl_RemoveSingleElement(t *testing.T) {
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 
 	list.PushFront(testData1)
 
@@ -83,7 +83,7 @@ func TestListImpl_RemoveSingleElement(t *testing.T) {
 
 func TestListImpl_PushFront_And_Remove(t *testing.T) {
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 
 	list.PushFront(testData1)
 	list.PushFront(testData2)
@@ -98,7 +98,7 @@ func TestListImpl_PushFront_And_Remove(t *testing.T) {
 
 func TestListImpl_PushFront(t *testing.T) {
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 
 	list.PushFront(testData1)
 	list.PushFront(testData2)
@@ -127,7 +127,7 @@ func TestListImpl_PushFront(t *testing.T) {
 func TestListImpl_Repeatability(t *testing.T) {
 	// 1)
 	list := NewList()
-	defer cleanup(&list)
+	defer cleanup(list)
 	// 2)
 	assert.Equal(t, 0, list.Len())
 	list.PushFront(testData1)

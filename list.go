@@ -1,14 +1,5 @@
 package doublylinkedlist
 
-type DoublyLinkedList interface {
-	Len() int
-	First() *Node
-	Last() *Node
-	PushFront(interface{})
-	PushBack(interface{})
-	RemoveNode(*Node)
-}
-
 /**
  * Doubly Linked List
  */
@@ -18,7 +9,7 @@ type ListImpl struct {
 	len  int
 }
 
-func NewList() DoublyLinkedList {
+func NewList() *ListImpl {
 	return &ListImpl{}
 }
 
@@ -35,11 +26,30 @@ func (l *ListImpl) Last() *Node {
 }
 
 func (l *ListImpl) PushFront(data interface{}) {
-	l.push(data)
+	l.push(data, true)
 }
 
 func (l *ListImpl) PushBack(data interface{}) {
-	l.pop(data)
+	l.push(data, false)
+}
+
+func (l *ListImpl) push(data interface{}, front bool) {
+	if data == nil {
+		return
+	}
+	node := &Node{Data: data, list: l}
+	if l.tail == nil || l.head == nil {
+		l.head, l.tail = node, node
+		l.len++
+		return
+	}
+	if front {
+		l.head.prev, node.next, l.head = node, l.head, node
+	} else {
+		l.tail.next, node.prev, l.tail = node, l.tail, node
+	}
+	l.len++
+	return
 }
 
 func (l *ListImpl) RemoveNode(n *Node) {
@@ -49,53 +59,16 @@ func (l *ListImpl) RemoveNode(n *Node) {
 	l.remove(n)
 }
 
-func (l *ListImpl) push(data interface{}) {
-	if data == nil {
-		return
-	}
-	node := &Node{Data: data, list: l}
-	if l.head == nil {
-		l.head, l.tail = node, node
-	} else {
-		l.head.parent, node.child, l.head = node, l.head, node
-	}
-	l.len++
-	return
-}
-
-func (l *ListImpl) pop(data interface{}) {
-	if data == nil {
-		return
-	}
-	node := &Node{Data: data, list: l}
-	if l.tail == nil {
-		l.head, l.tail = node, node
-	} else {
-		l.tail.child, node.parent, l.tail = node, l.tail, node
-	}
-	l.len++
-	return
-}
-
 func (l *ListImpl) remove(n *Node) {
-	switch {
-	case n == l.head && n != l.tail:
-		n.child.parent, l.head = nil, n.child
-		break
-
-	case n != l.head && n == l.tail:
-		n.parent.child, l.tail = nil, n.parent
-		break
-
-	case n == l.head && n == l.tail:
-		break
-
-	case n != l.head && n != l.tail:
-		n.parent.child, n.child.parent = n.child, n.parent
-		break
-
-	default:
-		panic("literally impossible situation")
+	if n.prev == nil {
+		l.head = n.next
+	} else {
+		n.prev.next = n.next
+	}
+	if n.next == nil {
+		l.tail = n.prev
+	} else {
+		n.next.prev = n.prev
 	}
 	n = nil
 	// Decrement list length and ensure that when the last element
@@ -110,10 +83,10 @@ func (l *ListImpl) remove(n *Node) {
  * Node
  */
 type Node struct {
-	Data   interface{}
-	parent *Node
-	child  *Node
-	list   *ListImpl
+	Data interface{}
+	prev *Node
+	next *Node
+	list *ListImpl
 }
 
 func (n Node) Value() interface{} {
@@ -121,9 +94,9 @@ func (n Node) Value() interface{} {
 }
 
 func (n Node) Next() *Node {
-	return n.child
+	return n.next
 }
 
 func (n Node) Prev() *Node {
-	return n.parent
+	return n.prev
 }
